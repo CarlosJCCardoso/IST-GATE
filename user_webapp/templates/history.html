@@ -1,0 +1,39 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<style>
+    table, th, td {
+        border: 1px solid black;
+    }
+</style>
+
+<div style = "margin:10px">
+    <h3> List of Logs
+    </h3>
+    <h3>{{log_id}}</h3>
+    <h3>{{err}}</h3>
+    
+    <table>
+        <thead>
+            <tr>   
+                <th>Time</th>
+                <th>Log_id</th>
+                <th>User_id</th>
+                <th>Gate_id</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for attempt in attempts %}
+            <tr>
+                <td>{{ attempt["time"] }}</td>
+                <td>{{ attempt["log_id"] }}</td>
+                <td>{{ attempt["user_id"] }}</td>
+                <td>{{ attempt["gate_id"] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+</div>
+  
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <div style = "margin:10px">
+      <form action = "" method="post">
+        Gate ID: 
+        <input type="text" id="gate_id" name="gate_id"><br><br>
+        Gate Location:
+        <input type="text" id="location" name=location><br><br>
+        <input type="submit" value="Register Gate">
+      </form>
+    </div>
+    <div style = "margin:10px">
+        <p>{{ message }}</p>
+      </div>
+    {% endblock %}

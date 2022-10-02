@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Gate WebApp</title>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+</head>
+<body>
+  <div style="margin:45px">
+    <form method = 'POST'>
+      <label for="gate_id">Gate ID:</label><br>
+      <input type="text" id="gate_id" name="gate_id"><br>
+      <label for="gate_secret">Gate Secret:</label><br>
+      <input type="text" id="gate_secret" name="secret"><br>
+      <input type="submit" value="Validate" id=buttonValidateSecret>
+    </form>
+    {% block content %}
+    <div>
+      <p>{{error}}</p>
+    </div>
+    {% endblock %}
+  </div>
+  
+  
+
+
+  <div></div>
+
+
+</body>

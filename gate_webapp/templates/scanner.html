@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Gate WebApp</title>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
+  </head>
+  <body>
+
+    <div style = "margin:10px">
+      <h2>Gate ID: {{g.gate}}</h2>
+    </div>
+    <div style = "border: 2px solid black; width:100px; height:100px;">
+      <div style="background-color:#FFFFFF; width:100px; height:100px;" id="no-light"> </div>
+      <div style="background-color:#00FF00; width:100px; height:100px;" id="green-light"> </div>
+      <div style="background-color:#FF0000; width:100px; height:100px;" id="red-light"> </div>
+    </div>
+    
+    <div style= "width:50%">
+        <div id="reader" width="250px"></div>
+    </div>
+    
+
+
+    <p id=error></p>
+
+
+  </body>
+
+  <script>
+      function validateCode(decodedcode, callback){
+          $.ajax({
+                  url: `/API/codes/${decodedcode}/`,
+                  type: "GET",
+                  contentType: 'application/json',
+                  success: function (response) {
+                      console.log("Response from /validateCode")
+                      console.log(response); 
+                      console.log("Validate code")
+                      callback(response);
+                  }
+              });
+          
+      }
+      // NOT USED
+      // Increment number of activations of gate with gate_id
+      function incrementActivations(gate_id){
+        $.ajax({
+                  url: `/API/gates/activations/`,
+                  type: "POST",
+                  contentType: 'application/json',
+                  success: function (response) {
+                      console.log(response);
+                  }
+              });
+      }
+
+      // NOT USED
+      // Register new attempt
+      function registerAttempt(gate_id, successful){
+        request_data = {"successful": successful}
+        $.ajax({
+                  url: `/API/gates/attempts`,
+                  type: "POST",
+                  contentType: 'application/json',
+                  data: request_data,
+                  success: function (response) {
+                      console.log(response);
+                  }
+              });
+      }
+
+      // NOT USED
+      // Register new user log
+      function registerLog(gate_id, user_id){
+        request_data = {"gate_id": gate_id}
+        $.ajax({
+                  url: `/API/users/${user_id}/logs`,
+                  type: "POST",
+                  contentType: 'application/json',
+                  data: request_data,
+                  success: function (response) {
+                      console.log(response);
+                  }
+              });
+
+      }
+
+
+      function scanner(){
+          var html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: {width: 250, height: 250} }, /* verbose= */ false);  
+          function pauseScanner(callback){
+              html5QrcodeScanner.pause();
+              callback();
+          }
+          function openGate(response, callback){
+              if(response === true){
+
+                $("#green-light").show();
+                $("#no-light").hide();
+                delay = 60000;
+              }
+              else if(response === false){
+                  $("#red-light").show();
+                  $("#no-light").hide();
+                  delay = 10000;
+              }
+              callback(delay)
+          }
+
+          function resumeScanning(){
+              $("#green-light").hide();
+              $("#red-light").hide();
+              $("#no-light").show();
+              html5QrcodeScanner.resume();
+          }
+
+          function onScanSuccess(decodedText, decodedResult) {
+            $("#error").text("")
+              console.log(`Code matched = ${decodedText}`, decodedResult);
+              // 1 - Pausa o scanner
+              pauseScanner(function(){
+                // 2 - Valida o código (true ou false)
+                validateCode(decodedText, function(response){
+                  // Verificar que o validate code retornou false, true ou um json com o erro
+                  if(response == true || response == false){
+                    // 3 - Open gate - Consoante a validação incrementa o número de activações e acende a luz
+                    openGate(response, function(delay){
+                      console.log(`setTimeout(resumeScanning(),${delay})`)
+                      // 4 - No final do timer dá resume ao scanner e desliga a luz
+                      setTimeout(resumeScanning , delay)
+                    });
+                  } 
+                  else{
+                    err = JSON.parse(response)
+                    $("#error").text(`Error: ${err["error"]}`)
+                    setTimeout(resumeScanning , 100)
+                  }
+
+                  
+                })
+              })
+          }
+
+          function onScanFailure(error) {
+                  // handle the scan failure
+          }   
+
+          html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+      }
+
+
+      $(document).ready(function(){
+          $("#green-light").hide()
+          $("#red-light").hide()
+          scanner();
+
+      })
+
+  </script>
+
+</html>

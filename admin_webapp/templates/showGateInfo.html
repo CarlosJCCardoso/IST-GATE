@@ -1,0 +1,22 @@
+{% extends 'layout.html' %}
+
+
+
+{% block content %}
+<div style="margin:10px">
+  <form method = 'POST'>
+    <label for="gate_id">Gate ID:</label><br>
+    <input type="text" id="gate_id" name="gate_id"><br>
+    <input type="submit" value="Show Info" id=buttonShowInfo>
+  </form>
+</div>
+<div style="margin:10px">
+  <table>
+    <tr><td>Gate ID</td> <td>: {{gate_id}}</td></tr>
+    <tr><td>Location</td> <td>: {{location}}</td></tr>
+    <tr><td>Secret</td> <td>: {{secret}}</td></tr>
+    <tr><td>Activations</td> <td>: {{activations}}</td></tr>
+  </table>
+</div>
+
+{% endblock %}

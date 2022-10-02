@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div style = "margin:10px">
+    <h3> List of Gates
+    </h3>
+    <table>
+        <thead>
+            <tr><th>Gate ID</th></tr>
+        </thead>
+        <tbody>
+            {% for name in gate_ids %}
+                <tr><td>{{name}}</td>  </tr>
+            {% endfor %}
+        </tbody>
+        
+        
+        
+        
+    </table>
+
+    
+    
+</div>
+  
+{% endblock %}
